@@ -60,6 +60,25 @@ class VisualList
     true
   end
 
+  # Declare the list sorted. If the list really is sorted, returns true.
+  # If list is not sorted, raises exception.
+  def sorted!
+    if @values == @values.sort
+      display_list
+      puts "Success! List is sorted!"
+      true
+    else
+      raise "Sorry, list has not been sorted."
+    end
+  end
+
+  # true if index is within arrary bounds, false if not
+  def in_bounds?(index)
+    index.to_i > last_index
+  end
+
+private
+
   # Print the current state of the list to the screen.
   def display_list(read_index: nil, swap_index_a: nil, swap_index_b: nil)
     home_cursor
@@ -85,24 +104,6 @@ class VisualList
     sleep(@delay)
   end
 
-  # Declare the list sorted. If the list really is sorted, returns true.
-  # If list is not sorted, raises exception.
-  def sorted!
-    if @values == @values.sort
-      display_list
-      puts "Success! List is sorted!"
-      true
-    else
-      raise "Sorry, list has not been sorted."
-    end
-  end
-
-  # true if index is within arrary bounds, false if not
-  def in_bounds?(index)
-    index.to_i > last_index
-  end
-
-private
 
   # returns true if index is within bounds, otherwise raises exception
   def in_bounds!(index)
