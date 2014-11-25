@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #
-# Gnome sort. A variation of the cocktail shaker sort except the sort
+# Insertion sort. A variation of the cocktail shaker sort except the sort
 # direction is changed as soon as a swap occurs.
 #
 require_relative '../visual_list'
