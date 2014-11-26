@@ -12,16 +12,24 @@ class VisualList
   #     - :random - random values from minimum to maximum. Duplicates possible.
   #     - :linear - 1 to count in random order. No duplicates. Default.
   #     - :reversed - count down to 1 in descending order. No duplicates.
-  def initialize(count: 10, generator: :linear, minimum: 1, maximum: nil, delay: 0.1)
-    @count = count.to_i.abs
-    @reads = 0
-    @swaps = 0
-    @generator = generator
-    @delay = delay
-    @minimum = minimum.to_i.abs
-    @maximum = (maximum || count).to_i.abs
-    @values = self.send("generator_#{@generator}")
+  def initialize(count: 10, generator: :linear, minimum: 1, maximum: nil, delay: 0.1, values: nil)
+      @reads = 0
+      @swaps = 0
+      @delay = delay
+      
+    if values
+      @count = values.length
+      @values = values
+    else      
+      @count = count.to_i.abs
+      @generator = generator
+      @delay = delay
+      @minimum = minimum.to_i.abs
+      @maximum = (maximum || count).to_i.abs
+      @values = self.send("generator_#{@generator}")
+    end
     @largest_value = @values.inject{|a,b| b > a ? a = b : a }
+ 
     clear_screen
     display_list
   end
@@ -39,6 +47,21 @@ class VisualList
     @values[index]
   end
   alias :[] :get
+  
+  # move a value in the array to another location
+  # returns true if success, raises exception if arguments are out of bounds
+  def move(source_index, destination_index)
+    [source_index, destination_index].each do |index|
+      in_bounds!(index)
+    end
+    
+    display_list(swap_index_a: source_index, swap_index_b: destination_index)
+    
+    @values.insert(destination_index, @values.delete_at(source_index))
+    @swaps += 1
+    
+    display_list(swap_index_a: source_index, swap_index_b: destination_index)
+  end
 
   # Swap the values of two index locations. Returns true if operation is
   # successful. Raises exception of either argument is our of list bounds.
@@ -68,6 +91,7 @@ class VisualList
       puts "Success! List is sorted!"
       true
     else
+      puts @values.inspect
       raise "Sorry, list has not been sorted."
     end
   end
@@ -140,4 +164,6 @@ private
   def generator_reversed
     @count.downto(1).map{|i| i }
   end
+  
+  
 end
